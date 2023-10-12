@@ -25,8 +25,8 @@ export:
 	@echo "Exporting dependencies to requirements file"
 	python -m pip freeze > requirements.txt
 
-force_backup: # To push to Github without running precommit
-	git commit --no-verify -m "backup"
+force backup: # To push to Github without running precommit
+	git commit --no-verify -m backup
 	git push origin 
 
 update: #retrieve new 
