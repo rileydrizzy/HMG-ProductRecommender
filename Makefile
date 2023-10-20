@@ -1,21 +1,21 @@
 .DEFAULT_GOAL := help
 
 help:
-	@echo "    prepare              desc of the command prepare"
-	@echo "    install              desc of the command install"
+	@echo "    setup                Set up the environment with the required dependencies"
+	@echo "    env			create a virtual environment"
+	@echo "    export               save the dependencies onto the requirements txt file"
+	@echo "    precommit            runs precommit on all files"
 
-
-install:
-	@echo "Installing..."
+setup:
+	@echo "Installaling and activating virtual environment"
 	python -m pip install -r requirements.txt
-	pip install pre-commit
 	pre-commit install
+	@echo "Environment setup complete"
 	
-activate:
+env:
 	@echo "Activating virtual environment"
-	source env/bin/activate
-
-setup: install
+	python -m venv env
+# source env/bin/activate
 
 precommit:
 	@echo "Running precommit on all files"
@@ -25,9 +25,6 @@ export:
 	@echo "Exporting dependencies to requirements file"
 	python -m pip freeze > requirements.txt
 
-force backup: # To push to Github without running precommit
+backup: # To push to Github without running precommit
 	git commit --no-verify -m backup
 	git push origin 
-
-update: #retrieve new 
-	git pull origin main
