@@ -1,0 +1,2 @@
+export KAGGLE_USERNAME=username
+export KAGGLE_KEY=xxxxxxxxxxxxxx

@@ -96,3 +96,6 @@ data/*/*
 
 # Develoment Enviroment
 dev
+
+# Environment Variables
+set_environment_variables.sh
