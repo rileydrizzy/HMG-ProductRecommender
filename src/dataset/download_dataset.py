@@ -11,8 +11,9 @@ Functions:
 
 import os
 import shutil
-from zipfile import ZipFile
 import subprocess
+import zipfile
+
 from loguru import logger
 
 DATA_DIR = "data/raw"
@@ -37,7 +38,7 @@ meta_files = [
 images_files_dir = list(range(10, 96))
 
 
-def check_storage(project = os.getcwd()):
+def check_storage(project=os.getcwd()):
     """_summary_
 
     Parameters
@@ -56,9 +57,9 @@ def check_storage(project = os.getcwd()):
         _description_
     """
     total, used, free = shutil.disk_usage(project)
-    total_size_gb = round(total / (2**30), 2)
-    used_size_gb = round(used / (2**30), 2)
-    free_size_gb = round(free / (2**30), 2)
+    total_size_gb = round(total / (2 ** 30), 2)
+    used_size_gb = round(used / (2 ** 30), 2)
+    free_size_gb = round(free / (2 ** 30), 2)
     if used_size_gb / total_size_gb >= 0.8:
         raise StorageFullError
     else:
@@ -89,8 +90,8 @@ def download_dataset_(cmd, file, dire):
         os.path.exists(unzipped_file_path)
         and os.path.splitext(unzipped_file_path)[1].lower() == ".zip"
     ):
-        with ZipFile(unzipped_file_path, "r") as unzipped_file:
-            unzipped_file.extract(dire)
+        with zipfile.ZipFile(unzipped_file_path, "r") as unzipped_file:
+            unzipped_file.extractall(dire)
         os.remove(unzipped_file_path)
     return True
 
@@ -116,9 +117,10 @@ def download_loop(file_array, main_dir, images_dw=False):
     for file_name in file_array:
         if images_dw:
             check_storage()
-            file_name = IMAGES_DIR + file_name
+            file_name = IMAGES_DIR + str(file_name)
             directory_path = main_dir + "/" + file_name
         logger.info(f"Downloading {file_name} in {directory_path}")
+        # TODO check if file already exist
         COMMAND[6] = file_name
         COMMAND[-1] = directory_path
         re = download_dataset_(cmd=COMMAND, file=file_name, dire=directory_path)
@@ -145,10 +147,11 @@ def main():
     try:
         if not os.path.isdir(DATA_DIR):
             os.makedirs(DATA_DIR)
-        logger.info(f"{check_storage()}")
+        logger.info(f" Current free space: {check_storage()}GB")
         download_loop(meta_files, DATA_DIR)
         logger.success(f"Downloaded metadata into {DATA_DIR}")
         logger.info(f"{check_storage()}")
+        # TODO CLEAR
         logger.info("Downloading images datasets")
         download_loop(images_files_dir, DATA_DIR, images_dw=True)
         logger.success(f"Dataset downloaded to {DATA_DIR} successfully.")
